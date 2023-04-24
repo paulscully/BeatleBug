@@ -1,0 +1,67 @@
+﻿@page "/login"
+@inject IUserService userService
+@inject NavigationManager NavigationManager
+
+<h1 style="text-align:center">Login</h1>
+
+<div style="background-color:#fefefe;width:400px; margin:auto;" class="card">
+    <div style="margin:auto" class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="loginDto" OnValidSubmit="HandleValidSubmit">
+            <CustomValidation @ref="customValidation" />
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mb-3">
+                <label for="username">Username</label>
+                <InputText Id="username" Class="form-control" @bind-Value="loginDto.Username" />
+                <ValidationMessage For="@(() => loginDto.Username)" />
+            </div>
+            <div class="form-group mb-3">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" Class="form-control" @bind-Value="loginDto.Password" />
+                <ValidationMessage For="@(() => loginDto.Password)" />
+            </div>
+
+            @if (!loggingIn)
+            {
+                <button class="btn btn-primary" type="submit">Submit</button>
+            }
+            else
+            {
+                <p>
+                    Logging in...
+                </p>
+            }
+
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    private LoginDto loginDto = new();
+    private CustomValidation? customValidation;
+    private bool loggingIn;
+
+    private async Task HandleValidSubmit()
+    {
+        loggingIn = true;
+
+        var result = await userService.LoginUser(loginDto);
+
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("bugs");
+        }
+        else
+        {
+            customValidation?.ClearErrors();
+            var errors = new Dictionary<string, List<string>>();
+            errors.Add("", new List<string> { result.Message });
+            customValidation?.DisplayErrors(errors);
+        }
+
+        loggingIn = false;
+    }
+}

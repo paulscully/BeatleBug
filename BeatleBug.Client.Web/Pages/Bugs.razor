@@ -1,0 +1,52 @@
+﻿@page "/Bugs"
+@*@attribute [Authorize]*@
+@inject HttpClient Http
+@inject IBugService bugService
+
+<div style="margin-bottom:15px">
+    <RadzenDropDown TValue="string" Placeholder="Select Status" Change="@(args => OnChange(args))"
+        Data="@statusResponse" TextProperty="StatusDescription" ValueProperty="StatusId" Style="width:300px;"
+    />
+</div>
+
+
+
+<RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Bug" />
+<RadzenDataGrid style="height: 335px" @ref="BugsGrid" Data="@bugs" AllowSorting="true" AllowFiltering="true" AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center" TItem="BugResponseDto" ColumnWidth="200px">
+    <Columns>
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="BugId" Width="100px" Filterable="true" Title="Id" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="Title" Width="100px" Filterable="true" Title="Title" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="Description" Width="100px" Filterable="true" Title="Description" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="Reporter" Width="100px" Filterable="true" Title="Reported By" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="Assignee" Width="100px" Filterable="true" Title="Assigned To" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="CreateDate" Width="100px" Filterable="true" Title="Create Date" Frozen="false"  TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="UpdateDate" Width="100px"  Filterable="true" Title="Last Updated" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="StatusDescription" Width="100px" Filterable="true" Title="Status" Frozen="false" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="BugResponseDto" Property="SeverityDescription" Width="100px" Filterable="true" Title="Severity" Frozen="false" TextAlign="TextAlign.Center" />
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    RadzenDataGrid<BugResponseDto>? BugsGrid;
+    IEnumerable<StatusResponseDto>? statusResponse;
+    IEnumerable<BugResponseDto>? bugs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        statusResponse = await bugService.GetStatus();
+
+        bugs = await bugService.GetBugs(0);
+    }
+
+    private async Task OnChange(object value)
+    {
+        int i = (int)value;
+
+        Console.WriteLine($"value changed to {i}");
+        bugs = await bugService.GetBugs(i);
+        BugsGrid?.Reload();
+    }
+}

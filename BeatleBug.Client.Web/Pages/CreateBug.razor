@@ -1,0 +1,31 @@
+﻿@page "/CreateBug"
+@attribute [Authorize]
+
+<h3>Create Bug</h3>
+
+<RadzenTemplateForm TItem="BugDto" Data=@bugDto Submit=@OnSubmit>
+    <div class="form-group">
+        <label><RadzenLabel Component="Title" Text="Title" /></label>
+        <div><RadzenTextBox Name="Title" @bind-Value=@bugDto.Title /></div>
+        <RadzenRequiredValidator Component="FirstName" Text="Title is required!" />
+    </div>
+    <p></p>
+    <div class="form-group">
+        <label><RadzenLabel Component="Description" Text="Description" /></label>
+        <div><RadzenTextBox Name="Description" @bind-Value=@bugDto.Description /></div>
+        <RadzenRequiredValidator Component="LastName" Text="Description is required!" />
+    </div>
+    <p></p>
+    <p>This page demostrates authorisation, it cannot be accessed when logged out.<br />
+       The Front End is not hooked up to the API, bugs can be created using Swagger or Postman</p>
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
+</RadzenTemplateForm>
+
+@code {
+    private BugDto bugDto = new();
+
+    void OnSubmit(BugDto bugDto)
+    {
+        
+    }
+}

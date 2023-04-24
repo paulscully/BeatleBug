@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@using BeatleBug.Client.Web.Services.Contracts;
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UserService.LogoutUser();
+        NavigationManager.NavigateTo("/");
+    }
+}
