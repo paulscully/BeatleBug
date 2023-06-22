@@ -16,7 +16,7 @@ namespace BeatleBug.Client.Web.Services.Contracts
         {
             try
             {
-                var bugList = await GetAsync<IEnumerable<BugResponseDto>>($"list/id?id={id}");
+                var bugList = await GetAsync<IEnumerable<BugResponseDto>>($"list/statusId?id={id}");
                 return bugList ?? new List<BugResponseDto>();
             }
             catch (Exception e)
